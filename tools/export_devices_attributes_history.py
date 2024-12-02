@@ -30,11 +30,17 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
     get_devices(access_token, 1, device_id, device_type_id, device_group_id, include_sub_groups)
     log_info(devices)
     
+    range_start_ts = time.time() - 30 * 24 * 60 * 60
+    range_end_ts = time.time()
+    if start_time != None:
+        range_start_ts = string_to_unix_timestamp(start_time)
+    if end_time != None:
+        range_end_ts = string_to_unix_timestamp(end_time)
+    log_info(f"导出时间范围: {unix_timestamp_to_datetime_str(range_start_ts)} - {unix_timestamp_to_datetime_str(range_end_ts)}")
     total_devices = len(devices)
     click.echo(f"找到 {len(devices)} 个设备")
-    with tqdm(total=total_devices, desc="Processing devices", unit="device") as pbar:
+    with tqdm(total=total_devices, desc="总进度", unit="设备") as pbar:
         for device in devices:
-            
             attributes = get_device_attributes(access_token, device['id'])
             time.sleep(1)
             for attribute in attributes:
@@ -44,19 +50,30 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
                 log_info(f"属性 [{attr_identifier} - {attr_name}]")
                 pbar.refresh()
                 if attr_name and attr_identifier:
-                    series_page = 1
-                    while True:
-                        series_data = get_device_attribute_series(access_token, device['id'], attr_identifier, series_page, start_time, end_time)
-                        log_info(series_data)
-                        pbar.refresh()
-                        for item in series_data:
-                            data = [device['name'], device['type_name'], attr_name, item['name'], item['timestamp'],  item['value']]
-                            append_to_csv(data)
-                        time.sleep(1)
-                        if len(series_data) < series_page_records:
-                            break
-                        series_page += 1
-            
+                    with tqdm(total=100, desc=f"设备[{device['name']}] 属性[{attr_name}]", unit="历史数据") as pbar2:
+                        series_page = 1
+                        while True:
+                            series_data = get_device_attribute_series(access_token, device['id'], attr_identifier, series_page, range_start_ts, range_end_ts)
+                            if series_data == None:
+                                break
+                            log_info(f"读取 {len(series_data)} 条历史数据")
+                            pbar.refresh()
+                            pbar2.refresh()
+                            if len(series_data) > 0:
+                                first_time = series_data[0]['timestamp']
+                                last_time = series_data[-1]['timestamp']
+                                log_info(f"数据时间范围: {first_time} - {last_time}")
+                                for item in series_data:
+                                    data = [device['name'], device['type_name'], attr_name, item['name'], item['timestamp'],  item['value']]
+                                    append_to_csv(data)
+                            
+                            time.sleep(1)
+                            pbar2.update(1)
+                            if len(series_data) < series_page_records:
+                                pbar2.update(100)
+                                break
+                            series_page += 1
+                            
             pbar.update(1)  # 更新进度条
             
 
@@ -152,15 +169,11 @@ def get_device_attribute_series(access_token, device_id, attr_identifier, page, 
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}"
     }
-    if start_ts is None:
-        start_ts = int((time.time() - 30 * 24 * 60 * 60) * 1000)
-    if end_ts is None:
-        end_ts = int(time.time() * 1000)
     query = {
         'page_records': series_page_records,
         'page': page,
-        'start_time': start_ts,
-        'end_time': end_ts,
+        'start_time': start_ts * 1000,
+        'end_time': end_ts * 1000,
     }
     api_url = base_url() + "/api/v1/device/" + str(device_id) + "/attribute/" + attr_identifier + "/series?" + urlencode(query)
     try:
@@ -171,6 +184,7 @@ def get_device_attribute_series(access_token, device_id, attr_identifier, page, 
             return data['info']
         else:
             print(f"请求失败！返回结果: {response.json()}")
+            return None
 
     except requests.exceptions.RequestException as e:
         print(f"请求发生错误: {str(e)}")
@@ -179,4 +193,23 @@ def append_to_csv(data):
     with open(f'export/{current_time}.csv', 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(data)
+
+def string_to_unix_timestamp(start_time_str):
+    # 将字符串时间解析为 datetime 对象
+    start_time = datetime.datetime.strptime(start_time_str, '%Y%m%d%H%M%S')
+    
+    # 将 datetime 对象转换为 Unix 时间戳（秒）
+    unix_timestamp_seconds = time.mktime(start_time.timetuple())
+    
+    # 将 Unix 时间戳（秒）转换为毫秒，并返回
+    return int(unix_timestamp_seconds)
+
+def unix_timestamp_to_datetime_str(ts):
+    # 将Unix时间戳（秒数）转换为datetime对象
+    dt = datetime.datetime.fromtimestamp(ts)
+    
+    # 将datetime对象格式化为字符串
+    formatted_time = dt.strftime('%Y-%m-%d %H:%M:%S')
+    
+    return formatted_time
 
