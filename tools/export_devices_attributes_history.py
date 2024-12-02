@@ -36,7 +36,10 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
         range_start_ts = string_to_unix_timestamp(start_time)
     if end_time != None:
         range_end_ts = string_to_unix_timestamp(end_time)
+    range_duration = range_end_ts - range_start_ts
+    range_days = range_duration / (24 * 60 * 60)
     log_info(f"导出时间范围: {unix_timestamp_to_datetime_str(range_start_ts)} - {unix_timestamp_to_datetime_str(range_end_ts)}")
+    
     total_devices = len(devices)
     click.echo(f"找到 {len(devices)} 个设备")
     with tqdm(total=total_devices, desc="总进度", unit="设备") as pbar:
@@ -47,32 +50,35 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
                 attr_identifier = attribute['identifier']
                 attr_model = attribute.get('model', {})
                 attr_name = attr_model.get('name', '')
-                log_info(f"属性 [{attr_identifier} - {attr_name}]")
+                if attr_name == '':
+                    break
+                log_info(f"开始导出 设备[{device['name']}] 属性[{attr_identifier} - {attr_name}]")
                 pbar.refresh()
                 if attr_name and attr_identifier:
-                    with tqdm(total=100, desc=f"设备[{device['name']}] 属性[{attr_name}]", unit="历史数据") as pbar2:
+                    end_ts = range_end_ts
+                    while end_ts > range_start_ts:
+                        start_ts = end_ts - 24 * 60 * 60 * 30
+                        if start_ts < range_start_ts:
+                            start_ts = range_start_ts
                         series_page = 1
                         while True:
                             series_data = get_device_attribute_series(access_token, device['id'], attr_identifier, series_page, range_start_ts, range_end_ts)
                             if series_data == None:
                                 break
-                            log_info(f"读取 {len(series_data)} 条历史数据")
-                            pbar.refresh()
-                            pbar2.refresh()
                             if len(series_data) > 0:
                                 first_time = series_data[0]['timestamp']
                                 last_time = series_data[-1]['timestamp']
-                                log_info(f"数据时间范围: {first_time} - {last_time}")
+                                click.echo(f"\n设备[{device['name']}] 属性[{attr_name}] 读取数据 {len(series_data)} 条，时间范围: {last_time} - {first_time}")
+                                pbar.refresh()
                                 for item in series_data:
                                     data = [device['name'], device['type_name'], attr_name, item['name'], item['timestamp'],  item['value']]
                                     append_to_csv(data)
                             
                             time.sleep(1)
-                            pbar2.update(1)
                             if len(series_data) < series_page_records:
-                                pbar2.update(100)
                                 break
                             series_page += 1
+                        end_ts = start_ts
                             
             pbar.update(1)  # 更新进度条
             
@@ -158,6 +164,7 @@ def get_device_attributes(access_token, device_id):
             return data['info']
         else:
             print(f"请求失败！返回结果: {response.json()}")
+            return None
 
     except requests.exceptions.RequestException as e:
         print(f"请求发生错误: {str(e)}")
