@@ -17,13 +17,13 @@ devices = []
 current_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
 @click.command('export_devices')
-@click.option('--device_type_id', required=False, help='Device ID to export attributes history')
-@click.option('--device_group_id', required=False, help='Device ID to export attributes history')
+@click.option('--type_id', required=False, help='Device ID to export attributes history')
+@click.option('--group_id', required=False, help='Device ID to export attributes history')
 @click.option('--include_sub_groups', is_flag=True, required=False, default=False, help='包含子组的设备')
 @click.option('--qrcode', is_flag=True, required=False, default=False, help='生成设备二维码')
 
 
-def export_devices(device_type_id, device_group_id, include_sub_groups, qrcode):
+def export_devices(type_id, group_id, include_sub_groups, qrcode):
     global devices
     access_token = get_access_token()
     if access_token == None:
@@ -35,7 +35,7 @@ def export_devices(device_type_id, device_group_id, include_sub_groups, qrcode):
     data_header = ['设备ID', '设备名称', '设备类型', 'Device Key', '设备码']
     append_to_csv(data_header)
     
-    get_devices(access_token, 1, device_type_id, device_group_id, include_sub_groups)
+    get_devices(access_token, 1, type_id, group_id, include_sub_groups)
     click.echo(f"共找到 {len(devices)} 个设备")
     
     # 导出
@@ -49,7 +49,7 @@ def export_devices(device_type_id, device_group_id, include_sub_groups, qrcode):
                 gen_qrcode(file_name, device['device_code'])
             pbar.update(1)
     
-def get_devices(access_token, page, device_type_id, device_group_id, include_sub_groups):
+def get_devices(access_token, page, type_id, group_id, include_sub_groups):
     global devices
     headers = {
         "Content-Type": "application/json",
@@ -59,14 +59,14 @@ def get_devices(access_token, page, device_type_id, device_group_id, include_sub
         'page_records': 50,
         'page': page,
     }
-    if device_type_id:
-        query['type'] = device_type_id
-        click.echo(f"正在导出设备类型[{device_type_id}]下所有设备的属性历史数据")
-    elif device_group_id:
-        query['groups'] = device_group_id
+    if type_id:
+        query['type'] = type_id
+        click.echo(f"正在导出设备类型[{type_id}]下所有设备的属性历史数据")
+    elif group_id:
+        query['groups'] = group_id
         if include_sub_groups:
             query['include_sub_groups'] = '1'
-        click.echo(f"正在导出设备组[{device_group_id}]下所有设备的属性历史数据")
+        click.echo(f"正在导出设备组[{group_id}]下所有设备的属性历史数据")
 
     api_url = base_url() + "/api/v1/devices?" + urlencode(query)
     try:
@@ -88,7 +88,7 @@ def get_devices(access_token, page, device_type_id, device_group_id, include_sub
             page_total = data['info']['page_total']
             if page_total > page:
                 time.sleep(1)
-                get_devices(access_token, page+1, device_type_id, device_group_id, include_sub_groups)
+                get_devices(access_token, page+1, type_id, group_id, include_sub_groups)
                     
         else:
             print(f"请求失败！返回结果: {response.json()}")
