@@ -26,6 +26,14 @@ series_page_records = 500
 def export_devices_attributes_history(path, device_id, device_type_id, device_group_id, include_sub_groups, start_time, end_time):
     
     access_token = get_access_token()
+    if access_token == None:
+        click.echo("API 身份验证失败，终止程序")
+        return
+    
+    click.echo("API 身份验证成功")
+    click.echo(f"数据导出到 {path}")
+    data_header = ['设备名称', '设备类型', '属性名称', '属性标识符', '上报时间', '属性值']
+    append_to_csv(data_header)
     
     get_devices(access_token, 1, device_id, device_type_id, device_group_id, include_sub_groups)
     log_info(devices)
@@ -71,7 +79,7 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
                                 click.echo(f"\n设备[{device['name']}] 属性[{attr_name}] 读取数据 {len(series_data)} 条，时间范围: {last_time} - {first_time}")
                                 pbar.refresh()
                                 for item in series_data:
-                                    data = [device['name'], device['type_name'], attr_name, item['name'], item['timestamp'],  item['value']]
+                                    data = [device['name'], device['type_name'], attr_name, item['name'], iso8601_to_datetime_str(item['timestamp']), item['value']]
                                     append_to_csv(data)
                             
                             time.sleep(1)
@@ -196,8 +204,11 @@ def get_device_attribute_series(access_token, device_id, attr_identifier, page, 
     except requests.exceptions.RequestException as e:
         print(f"请求发生错误: {str(e)}")
 
+def export_csv_path():
+    return f'export/{current_time}.csv'
+    
 def append_to_csv(data):
-    with open(f'export/{current_time}.csv', 'a', newline='', encoding='utf-8') as csvfile:
+    with open(export_csv_path(), 'a', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(data)
 
@@ -220,3 +231,11 @@ def unix_timestamp_to_datetime_str(ts):
     
     return formatted_time
 
+def iso8601_to_datetime_str(iso8601_str):
+    # 将ISO 8601时间字符串转换为datetime对象
+    dt = datetime.datetime.fromisoformat(iso8601_str.replace('Z', '+00:00'))
+    
+    # 将datetime对象格式化为自定义格式
+    formatted_time = dt.strftime('%Y-%m-%d %H:%M:%S')
+    
+    return formatted_time

@@ -29,7 +29,7 @@ def get_access_token():
         data = response.json()
         if data['result']:
             return data['info']['access_token']
-        return ""
+        return None
     except requests.exceptions.RequestException as e:
         print(f"获取 AccessToken 时发生错误: {str(e)}")
         return None
