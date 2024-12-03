@@ -15,12 +15,12 @@ current_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 series_page_records = 500
 
 @click.command('export_devices_attributes_history')
-@click.option('--device_id', required=False, help='Device ID to export attributes history')
-@click.option('--type_id', required=False, help='Device ID to export attributes history')
-@click.option('--group_id', required=False, help='Device ID to export attributes history')
-@click.option('--include_sub_groups', is_flag=True, required=False, default=False, help='包含子组的设备')
-@click.option('--start_time', required=False, help='Start time of the attributes history to export')
-@click.option('--end_time', required=False, help='End time of the attributes history to export')
+@click.option('--device_id', required=False, help='指定导出数据的设备 ID')
+@click.option('--type_id', required=False, help='指定导出数据的设备类型 ID')
+@click.option('--group_id', required=False, help='指定导出数据的设备组 ID，支持多个 ID 通过逗号分隔')
+@click.option('--include_sub_groups', is_flag=True, required=False, default=False, help='是否包含子组的设备')
+@click.option('--start_time', required=False, help='历史数据开始时间，格式为：YYYYMMDDHHmmss')
+@click.option('--end_time', required=False, help='历史数据结束时间，格式为：YYYYMMDDHHmmss')
 
 def export_devices_attributes_history(device_id, type_id, group_id, include_sub_groups, start_time, end_time):
     

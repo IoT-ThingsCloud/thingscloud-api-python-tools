@@ -17,10 +17,10 @@ devices = []
 current_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
 @click.command('export_devices')
-@click.option('--type_id', required=False, help='Device ID to export attributes history')
-@click.option('--group_id', required=False, help='Device ID to export attributes history')
-@click.option('--include_sub_groups', is_flag=True, required=False, default=False, help='包含子组的设备')
-@click.option('--qrcode', is_flag=True, required=False, default=False, help='生成设备二维码')
+@click.option('--type_id', required=False, help='指定导出设备所属的设备类型 ID')
+@click.option('--group_id', required=False, help='指定导出设备所属的设备组 ID，支持多个 ID 通过逗号分隔')
+@click.option('--include_sub_groups', is_flag=True, required=False, default=False, help='是否包含子组的设备')
+@click.option('--qrcode', is_flag=True, required=False, default=False, help='是否生成设备二维码')
 
 
 def export_devices(type_id, group_id, include_sub_groups, qrcode):
