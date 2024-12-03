@@ -31,7 +31,7 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
         return
     
     click.echo("API 身份验证成功")
-    click.echo(f"数据导出到 {path}")
+    click.echo(f"开始导出数据到 {path}")
     data_header = ['设备名称', '设备类型', '属性名称', '属性标识符', '上报时间', '属性值']
     append_to_csv(data_header)
     
@@ -126,12 +126,12 @@ def get_devices(access_token, page, device_id, device_type_id, device_group_id, 
         }
         if device_type_id:
             query['type'] = device_type_id
-            click.echo(f"正在导出设备类型 {device_type_id} 的属性历史记录")
+            click.echo(f"正在导出设备类型[{device_type_id}]下所有设备的属性历史数据")
         elif device_group_id:
             query['groups'] = device_group_id
             if include_sub_groups:
                 query['include_sub_groups'] = '1'
-            click.echo(f"正在导出设备组 {device_group_id} 的属性历史记录")
+            click.echo(f"正在导出设备组[{device_group_id}]下所有设备的属性历史数据")
 
         api_url = base_url() + "/api/v1/devices?" + urlencode(query)
         try:

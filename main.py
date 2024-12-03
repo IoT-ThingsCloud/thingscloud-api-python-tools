@@ -1,5 +1,6 @@
 import click
 from tools.export_devices_attributes_history import export_devices_attributes_history
+from tools.create_devices import create_devices
 from lib.store import GlobalStore
 
 @click.group()
@@ -9,6 +10,7 @@ def main(log):
     store.set_variable('log_enabled', log)
     pass
 
+main.add_command(create_devices)
 main.add_command(export_devices_attributes_history)
 
 if __name__ == "__main__":
