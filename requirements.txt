@@ -3,3 +3,4 @@ click
 requests
 tqdm
 pandas
+qrcode

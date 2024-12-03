@@ -15,7 +15,6 @@ current_time = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 series_page_records = 500
 
 @click.command('export_devices_attributes_history')
-@click.option('--path', default='export/example.csv', required=True, help='Path to save the exported devices')
 @click.option('--device_id', required=False, help='Device ID to export attributes history')
 @click.option('--device_type_id', required=False, help='Device ID to export attributes history')
 @click.option('--device_group_id', required=False, help='Device ID to export attributes history')
@@ -23,7 +22,7 @@ series_page_records = 500
 @click.option('--start_time', required=False, help='Start time of the attributes history to export')
 @click.option('--end_time', required=False, help='End time of the attributes history to export')
 
-def export_devices_attributes_history(path, device_id, device_type_id, device_group_id, include_sub_groups, start_time, end_time):
+def export_devices_attributes_history(device_id, device_type_id, device_group_id, include_sub_groups, start_time, end_time):
     
     access_token = get_access_token()
     if access_token == None:
@@ -31,12 +30,12 @@ def export_devices_attributes_history(path, device_id, device_type_id, device_gr
         return
     
     click.echo("API 身份验证成功")
-    click.echo(f"开始导出数据到 {path}")
+    click.echo(f"开始导出数据到 {export_csv_path()}")
     data_header = ['设备名称', '设备类型', '属性名称', '属性标识符', '上报时间', '属性值']
     append_to_csv(data_header)
     
     get_devices(access_token, 1, device_id, device_type_id, device_group_id, include_sub_groups)
-    log_info(devices)
+    click.echo(f"共找到 {len(devices)} 个设备")
     
     range_start_ts = time.time() - 30 * 24 * 60 * 60
     range_end_ts = time.time()
@@ -140,7 +139,7 @@ def get_devices(access_token, page, device_id, device_type_id, device_group_id, 
             data = response.json()
             if data['result']:
                 for device in data['info']['items']:
-                    log_info(f"设备 [{device['id']} - {device['name']}]")
+                    click.echo(f"找到设备 [{device['id']} - {device['name']}]")
                     type_info = device.get('type_info', {})
                     devices.append({
                         'id': device['id'],
@@ -150,7 +149,7 @@ def get_devices(access_token, page, device_id, device_type_id, device_group_id, 
                 page_total = data['info']['page_total']
                 if page_total > page:
                     time.sleep(1)
-                    get_devices(access_token, page+1, device_id, device_group_id, device_type_id)
+                    get_devices(access_token, page+1, device_id, device_type_id, device_group_id, include_sub_groups)
                         
             else:
                 print(f"请求失败！返回结果: {response.json()}")
