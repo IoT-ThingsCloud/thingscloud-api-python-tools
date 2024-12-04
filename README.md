@@ -141,7 +141,7 @@ name,device_key
 
 工具运行后，会显示导入进度，如下图：
 
-![articles/2023/20241204095121_f90a1f93075f3da225d300abf9a90317.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204095121_f90a1f93075f3da225d300abf9a90317.png)
+![](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204095121_f90a1f93075f3da225d300abf9a90317.png)
 
 
 #### 示例 2
@@ -178,11 +178,11 @@ python main.py export_devices --qrcode
 
 工具运行时显示导出进度，如下：
 
-![articles/2023/20241204100627_fabb8461b7eabca93b2f9c1a6eac080d.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204100627_fabb8461b7eabca93b2f9c1a6eac080d.png)
+![](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204100627_fabb8461b7eabca93b2f9c1a6eac080d.png)
 
 生成二维码图片文件，如下：
 
-![articles/2023/20241204100908_be9a6a4aebacfc31befe8632169ffbc2.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204100908_be9a6a4aebacfc31befe8632169ffbc2.png)
+![](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204100908_be9a6a4aebacfc31befe8632169ffbc2.png)
 
 
 #### 示例 3
@@ -230,11 +230,11 @@ python main.py export_devices_attributes_history
 
 工具运行时显示导出进度，如下：
 
-![articles/2023/20241204101018_bfe957ef52043afbdb0ca46fecbe2ddb.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204101018_bfe957ef52043afbdb0ca46fecbe2ddb.png)
+![](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204101018_bfe957ef52043afbdb0ca46fecbe2ddb.png)
 
 导出的 CSV 文件在 Excel 中打开如下：
 
-![articles/2023/20241204101208_7669bd9e1d52857c9ede33d89391a856.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204101208_7669bd9e1d52857c9ede33d89391a856.png)
+![](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204101208_7669bd9e1d52857c9ede33d89391a856.png)
 
 #### 示例 2
 
