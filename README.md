@@ -71,6 +71,40 @@ secret_key=
 python main.py --help
 ```
 
+获得使用帮助信息如下：
+
+```bash
+Usage: main.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --log   开启日志
+  --help  Show this message and exit.
+
+Commands:
+  create_devices
+  export_devices
+  export_devices_attributes_history
+  ...
+```
+
+以上列出的每个命令（Command），对应一个工具名称，可以查询工具的帮助信息，例如：
+
+```bash
+python main.py create_devices --help
+```
+
+获得帮助信息如下：
+
+```bash
+Usage: main.py create_devices [OPTIONS]
+
+Options:
+  --path TEXT     指定导入的 CSV 文件路径  [default:
+                  import/create_devices_template.csv]
+  --type_id TEXT  为创建的设备指定设备类型 ID  [required]
+  --help          Show this message and exit.
+```
+
 ### 批量创建设备
 
 该工具使用 CSV 文件中的设备信息，批量创建设备。
@@ -93,6 +127,11 @@ name,device_key
 设备名称2,100002
 设备名称3,100003
 ```
+
+工具运行后，会显示导入进度，如下图：
+
+![articles/2023/20241204095121_f90a1f93075f3da225d300abf9a90317.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204095121_f90a1f93075f3da225d300abf9a90317.png)
+
 
 #### 示例 2
 
@@ -120,11 +159,19 @@ python main.py export_devices
 
 #### 示例 2
 
-导出项目中的所有设备，同时生成设备二维码
+导出项目中的所有设备，同时生成设备二维码，执行命令：
 
 ```bash
 python main.py export_devices --qrcode
 ```
+
+工具运行时显示导出进度，如下：
+
+![articles/2023/20241204100627_fabb8461b7eabca93b2f9c1a6eac080d.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204100627_fabb8461b7eabca93b2f9c1a6eac080d.png)
+
+生成二维码图片文件，如下：
+
+![articles/2023/20241204100908_be9a6a4aebacfc31befe8632169ffbc2.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204100908_be9a6a4aebacfc31befe8632169ffbc2.png)
 
 
 #### 示例 3
@@ -169,6 +216,14 @@ python main.py export_devices_attributes_history
 ```
 
 该命令默认导出最近 30 天的属性历史数据。
+
+工具运行时显示导出进度，如下：
+
+![articles/2023/20241204101018_bfe957ef52043afbdb0ca46fecbe2ddb.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204101018_bfe957ef52043afbdb0ca46fecbe2ddb.png)
+
+导出的 CSV 文件在 Excel 中打开如下：
+
+![articles/2023/20241204101208_7669bd9e1d52857c9ede33d89391a856.png](https://img-1300291923.cos.ap-beijing.myqcloud.com/articles/2023/20241204101208_7669bd9e1d52857c9ede33d89391a856.png)
 
 #### 示例 2
 

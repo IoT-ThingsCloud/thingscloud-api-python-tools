@@ -12,7 +12,7 @@ from lib.api_common import base_url, get_access_token
 from lib.logger import log_info
 
 @click.command('create_devices')
-@click.option('--path', default='import/create_devices_template.csv', required=True, help='指定导入的 CSV 文件路径')
+@click.option('--path', default='import/create_devices_template.csv', required=False, show_default=True, help='指定导入的 CSV 文件路径')
 @click.option('--type_id', required=True, help='为创建的设备指定设备类型 ID')
 
 def create_devices(path, type_id):
@@ -28,14 +28,15 @@ def create_devices(path, type_id):
     # 读取 CSV 文件
     try:
         df = pd.read_csv(path)
-        access_token = get_access_token()
-        if access_token:
+        click.echo(f"共读取 {len(df)} 个设备")
+        with tqdm(total=len(df), desc="创建进度", unit="设备") as pbar:
             for index, row in df.iterrows():
-                device_key = str(row["device_key"])
                 name = str(row["name"])
+                device_key = str(row["device_key"])
                 click.echo(f"开始导入设备[{name} - {device_key}]")
                 create_device(access_token, name, device_key, type_id)
                 time.sleep(1)
+                pbar.update(1)
     except FileNotFoundError:
         print("找不到 CSV 文件")
     except Exception as e:
