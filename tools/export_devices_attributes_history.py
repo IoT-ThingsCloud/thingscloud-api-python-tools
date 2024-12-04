@@ -81,7 +81,7 @@ def export_devices_attributes_history(device_id, type_id, group_id, include_sub_
                                     data = [device['name'], device['type_name'], attr_name, item['name'], iso8601_to_datetime_str(item['timestamp']), item['value']]
                                     append_to_csv(data)
                             
-                            time.sleep(1)
+                            time.sleep(1.1)
                             if len(series_data) < series_page_records:
                                 break
                             series_page += 1
