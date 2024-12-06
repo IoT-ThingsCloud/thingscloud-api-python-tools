@@ -69,7 +69,8 @@ def export_devices_attributes_history(device_id, type_id, group_id, include_sub_
                             start_ts = range_start_ts
                         series_page = 1
                         while True:
-                            series_data = get_device_attribute_series(access_token, device['id'], attr_identifier, series_page, range_start_ts, range_end_ts)
+                            series_data = get_device_attribute_series(access_token, device['id'], attr_identifier, series_page, start_ts, end_ts)
+                            time.sleep(1.1)
                             if series_data == None:
                                 break
                             if len(series_data) > 0:
@@ -80,8 +81,6 @@ def export_devices_attributes_history(device_id, type_id, group_id, include_sub_
                                 for item in series_data:
                                     data = [device['name'], device['type_name'], attr_name, item['name'], unix_timestamp_ms_to_datetime_str(item['ts']), item['value']]
                                     append_to_csv(data)
-                            
-                            time.sleep(1.1)
                             if len(series_data) < series_page_records:
                                 break
                             series_page += 1
