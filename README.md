@@ -23,9 +23,9 @@
 
 ## 环境准备
 
-该工具集使用 `Python` 语言编写，运行在您的电脑上，需要安装 `Python` 环境。
+该工具集使用 Python 语言编写，运行在您的电脑上，需要安装 Python 3.8 或以上版本。
 
-`Python` 环境安装方法，网上教程非常丰富，请自行学习。
+Python 环境安装方法，网上教程非常丰富，请自行学习。
 
 
 ## 下载工具代码库
@@ -58,7 +58,6 @@ pip install -r requirements.txt
 
 ```ini
 [API]
-# 请在下方填写项目应用API信息
 base_url=
 app_id=
 access_key=
