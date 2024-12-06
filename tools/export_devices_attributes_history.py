@@ -78,7 +78,7 @@ def export_devices_attributes_history(device_id, type_id, group_id, include_sub_
                                 click.echo(f"\n设备[{device['name']}] 属性[{attr_name}] 读取数据 {len(series_data)} 条，时间范围: {last_time} - {first_time}")
                                 pbar.refresh()
                                 for item in series_data:
-                                    data = [device['name'], device['type_name'], attr_name, item['name'], iso8601_to_datetime_str(item['timestamp']), item['value']]
+                                    data = [device['name'], device['type_name'], attr_name, item['name'], unix_timestamp_ms_to_datetime_str(item['ts']), item['value']]
                                     append_to_csv(data)
                             
                             time.sleep(1.1)
@@ -229,6 +229,10 @@ def unix_timestamp_to_datetime_str(ts):
     formatted_time = dt.strftime('%Y-%m-%d %H:%M:%S')
     
     return formatted_time
+
+def unix_timestamp_ms_to_datetime_str(ts):
+    # 将Unix时间戳（毫秒数）转换为datetime对象
+    return unix_timestamp_to_datetime_str(int(ts / 1000))
 
 def iso8601_to_datetime_str(iso8601_str):
     # 将ISO 8601时间字符串转换为datetime对象
