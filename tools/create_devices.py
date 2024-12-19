@@ -12,10 +12,10 @@ from lib.api_common import base_url, get_access_token
 from lib.logger import log_info
 
 @click.command('create_devices')
-@click.option('--path', default='import/create_devices_template.csv', required=False, show_default=True, help='指定导入的 CSV 文件路径')
+@click.option('--file_path', default='import/create_devices_template.csv', required=False, show_default=True, help='指定导入的 CSV 文件路径')
 @click.option('--type_id', required=True, help='为创建的设备指定设备类型 ID')
 
-def create_devices(path, type_id):
+def create_devices(file_path, type_id):
     
     access_token = get_access_token()
     if access_token == None:
@@ -23,11 +23,11 @@ def create_devices(path, type_id):
         return
     
     click.echo("API 身份验证成功")
-    click.echo(f"开始读取导入文件 {path}")
+    click.echo(f"开始读取导入文件 {file_path}")
     
     # 读取 CSV 文件
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(file_path)
         click.echo(f"共读取 {len(df)} 个设备")
         with tqdm(total=len(df), desc="创建进度", unit="设备") as pbar:
             for index, row in df.iterrows():
