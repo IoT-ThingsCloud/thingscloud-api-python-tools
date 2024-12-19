@@ -33,6 +33,9 @@ def create_devices(file_path, type_id):
             for index, row in df.iterrows():
                 name = str(row["name"])
                 device_key = str(row["device_key"])
+                # 判断 device_key 在这一行中是否存在
+                if pd.isnull(row["device_key"]):
+                    device_key = ""
                 click.echo(f"开始导入设备[{name} - {device_key}]")
                 create_device(access_token, name, device_key, type_id)
                 time.sleep(1)
