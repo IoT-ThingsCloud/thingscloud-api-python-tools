@@ -203,7 +203,7 @@ def get_device_attribute_series(access_token, device_id, attr_identifier, page, 
         print(f"请求发生错误: {str(e)}")
 
 def export_csv_path():
-    return f'export/{current_time}.csv'
+    return f'export/history_data_{current_time}.csv'
     
 def append_to_csv(data):
     with open(export_csv_path(), 'a', newline='', encoding='utf-8') as csvfile:

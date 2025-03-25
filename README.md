@@ -7,6 +7,7 @@
 - ✨ 批量创建设备
 - ✨ 批量导出设备信息，以及生成设备二维码
 - ✨ 批量导出设备属性历史数据
+- ✨ 批量导出设备证书
 
 🔨 计划实现的工具包括：
 
@@ -301,4 +302,52 @@ python main.py export_devices_attributes_history --group_id=<group_id>
 
 ```bash
 python main.py export_devices_attributes_history --group_id=<group_id> --include_sub_groups
+```
+
+
+
+### 批量导出设备证书
+
+该工具用于批量导出设备证书到本地 CSV 文件。
+
+出于安全考虑，导出的证书信息中仅包含每台设备的 AccessToken，其它信息可以在 ThingsCloud 控制台中查看。
+
+设备证书用于硬件设备接入 ThingsCloud 平台时进行身份认证，关于设备证书的使用方法，请浏览 [ThingsCloud 文档 - 设备证书](https://www.thingscloud.xyz/docs/guide/connect-device/device-certificate.html)。
+
+
+#### 示例 1
+
+导出项目中所有设备的证书，执行命令：
+
+```bash
+python main.py export_devices_certificates
+```
+
+
+#### 示例 2
+
+指定设备类型下的所有设备证书，执行命令：
+
+```bash
+python main.py export_devices_certificates --type_id=<type_id>
+```
+
+将 `<type_id>` 替换为您要导出的设备类型 ID。
+
+#### 示例 3
+
+指定设备组下的所有设备证书，执行命令：
+
+```bash
+python main.py export_devices_certificates --group_id=<group_id>
+```
+
+将 `<group_id>` 替换为您要导出的设备组 ID。支持多个组，以逗号分隔。例如：`--group_id=<group_id1>,<group_id2>,<group_id3>`。
+
+#### 示例 4
+
+指定设备组下的所有设备证书，并包含子组下的所有设备，执行命令：
+
+```bash
+python main.py export_devices_certificates --group_id=<group_id> --include_sub_groups
 ```
