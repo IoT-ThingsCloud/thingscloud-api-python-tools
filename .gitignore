@@ -1,4 +1,4 @@
-export/
+export/*.csv
 config/project_api.ini
 
 # Byte-compiled / optimized / DLL files
